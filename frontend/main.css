@@ -1,3 +1,5 @@
+/* index.html */
+
 /* header */
 .alert {
   margin-top: 10px;
@@ -33,4 +35,48 @@
 .footer {
   border-top: 1px solid #dddddd;
   padding-top: 10px;
+}
+
+/* hookeys.html */
+.month {
+  font-weight: bold;
+}
+
+/* editor.html */
+.nameClass {
+  padding-left: 14%;
+  padding-bottom: 1%;
+}
+.secondNameClass {
+  padding-left: 8%;
+  padding-bottom: 1%;
+}
+.lastNameClass {
+  padding-left: 10%;
+  padding-bottom: 1%;
+}
+.ticketClass {
+  padding-left: 10%;
+  padding-bottom: 1%;
+}
+.dateClass {
+  padding-left: 4%;
+  padding-bottom: 1%;
+}
+.imgClass {
+  padding-left: 8%;
+  padding-bottom: 1%;
+}
+.substituteClass {
+  padding-left: 11%;
+  padding-bottom: 1%;
+}
+.pickClass {
+  padding-left: 12%;
+}
+.widthClass {
+  width: 179px !important;
+}
+.buttonsClass {
+  padding-left: 15%;
 }
