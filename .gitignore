@@ -90,3 +90,5 @@ ENV/
 
 #ideas
 .idea/
+idea/
+.idea
