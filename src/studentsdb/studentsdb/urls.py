@@ -20,8 +20,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # Students urls
+    # Students
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.students_list, name='home'),
+    url(r'^students/add/$', views.students_add, name='students_add'),
+    url(r'^students/(?P<sid>\d+)/edit/$', views.students_edit, name='students_edit'),
+    url(r'^students/(?P<sid>\d+)/delete/$', views.students_delete, name='students_delete'),
+    # Groups
+    url(r'^groups/$', views.groups_list, name='groups'),
+    url(r'^groups/add/$', views.groups_add, name='groups_add'),
+    url(r'^groups/(?P<gid>\d+)/edit/$', views.groups_edit, name='groups_edit'),
+    url(r'^groups/(?P<gid>\d+)/delete/$', views.groups_delete, name='groups_delete'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
