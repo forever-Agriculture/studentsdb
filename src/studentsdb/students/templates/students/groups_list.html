@@ -33,7 +33,7 @@
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li><a href="{% url "groups_edit" group.id %}">Редагувати</a></li>
-                    <li><a href="/journal/{{ student.id }}">Відвідування</a></li>
+                    <li><a href="{% url "journal" %}">Відвідування</a></li>
                     <li><a href="{% url "groups_delete" group.id %}">Видалити</a></li>
                   </ul>
                 </div>

@@ -1,0 +1,221 @@
+{% extends "students/base.html" %}
+
+{% load static from staticfiles %}
+
+{% block meta_title %}Відвідування{% endblock meta_title %}
+
+{% block content %}
+
+
+        <!-- Start Content Columns -->
+        <div class="content-columns">
+            <h2>Облік Відвідування</h2>
+              <p class="month text-center"><a href=”#”>&larr;</a> Лютий 2016 <a href=”#”>&rarr;</a></p>
+        </div>
+        <!-- End Content Columns -->
+
+        <!-- Start Table -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th><a href=”#”>№</a></th>
+              <th><a href=”#”>Студент</a></th>
+              <th><a href=”#”>Ср 1</a></th>
+              <th><a href=”#”>Чт 2</a></th>
+              <th><a href=”#”>Пт 3</a></th>
+              <th><a href=”#”>Сб 4</a></th>
+              <th><a href=”#”>Нд 5</a></th>
+              <th><a href=”#”>Пн 6</a></th>
+              <th><a href=”#”>Вт 7</a></th>
+              <th><a href=”#”>Ср 8</a></th>
+              <th><a href=”#”>Чт 9</a></th>
+              <th><a href=”#”>Пт 10</a></th>
+              <th><a href=”#”>Сб 11</a></th>
+              <th><a href=”#”>Нд 12</a></th>
+              <th><a href=”#”>Пн 13</a></th>
+              <th><a href=”#”>Вт 14</a></th>
+              <th><a href=”#”>Ср 15</a></th>
+              <th><a href=”#”>Чт 16</a></th>
+              <th><a href=”#”>Пт 17</a></th>
+              <th><a href=”#”>Сб 18</a></th>
+              <th><a href=”#”>Нд 19</a></th>
+              <th><a href=”#”>Пн 20</a></th>
+              <th><a href=”#”>Вт 21</a></th>
+              <th><a href=”#”>Ср 22</a></th>
+              <th><a href=”#”>Чт 23</a></th>
+              <th><a href=”#”>Пт 24</a></th>
+              <th><a href=”#”>Сб 25</a></th>
+              <th><a href=”#”>Нд 26</a></th>
+              <th><a href=”#”>Пн 27</a></th>
+              <th><a href=”#”>Вт 28</a></th>
+              <th><a href=”#”>Вт 29</a></th>
+              <th><a href=”#”>Вт 30</a></th>
+              <th><a href=”#”>Вт 31</a></th>
+          </thead>
+          <tbody>
+            {% for hookey in hookeys %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td><a href="{% url "students_edit" hookey.id %}">
+                {{ hookey.full_name }}</a></td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+              <td>
+                <label>
+                  <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                </label>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      <!-- End Table -->
+{% endblock content %}

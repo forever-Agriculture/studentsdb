@@ -35,6 +35,10 @@ urlpatterns = [
     url(r'^groups/(?P<gid>\d+)/edit/$', views.groups_edit, name='groups_edit'),
     url(r'^groups/(?P<gid>\d+)/delete/$', views.groups_delete, name='groups_delete'),
 
+    # Journal
+
+    url(r'^journal/$', views.journal_list, name='journal'),
+
     # Admin
 
     url(r'^admin/', admin.site.urls),
