@@ -2,36 +2,16 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Student
 
 # Create your views here.
 
     # Students
 
 def students_list(request):
-
-    students = (
-        {'id': 1,
-         'first_name': u'Надія',
-         'last_name': u'Гілюк',
-         'full_name': u'Гілюк Надія',
-         'ticket': 21,
-         'image': '1.png'},
-        {'id': 2,
-         'first_name': u'Роман',
-         'last_name': u'Блажкевич',
-         'full_name': u'Блажкевич Роман',
-         'ticket': 6,
-         'image': '1.png'},
-        {'id': 3,
-         'first_name': u'Платон',
-         'last_name': u'Гатило',
-         'full_name': u'Гатило Платон',
-         'ticket': 26,
-         'image': '1.png'},
-    )
-
+    students = Student.objects.all()
     return render(request, 'students/students_list.html',
-                                {'students': students})
+                  {'students': students})
 
 def students_add(request):
     return HttpResponse('<h1>Student Add Form</h1>')
