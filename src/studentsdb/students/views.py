@@ -3,6 +3,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Student
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 
@@ -18,6 +19,15 @@ def students_list(request):
         if request.GET.get('reverse', '') == '1':
             students = students.reverse()
 
+    # paginate students
+    paginator = Paginator(students, 3)
+    page = request.GET.get('page')
+    try:
+        students = paginator.page(page)
+    except PageNotAnInteger:
+        students = paginator.page(1)
+    except EmptyPage:
+        students = paginator.page(paginator.num_pages)
 
     return render(request, 'students/students_list.html',
                   {'students': students})
