@@ -2,7 +2,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Student
+from .models import Student, Group
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
@@ -20,7 +20,7 @@ def students_list(request):
             students = students.reverse()
 
     # paginate students
-    paginator = Paginator(students, 3)
+    paginator = Paginator(students, 5)
     page = request.GET.get('page')
     try:
         students = paginator.page(page)
@@ -44,15 +44,24 @@ def students_delete(request, sid):
     # Groups
 
 def groups_list(request):
+    groups = Group.objects.all()
 
-    groups = (
-        {'id': 1,
-         'name': u'ІПС-2',
-         'leader': {'id': 1, 'name': u'Арістотель Хтосько'}},
-        {'id': 2,
-         'name': u'ІПС-3',
-         'leader': {'id': 2, 'name': u'Новий Василь'}},
-    )
+    # try to order students list
+    order_by = request.GET.get('order_by', 'title')
+    if order_by in ('leader', 'title'):
+        groups = groups.order_by(order_by)
+        if request.GET.get('reverse', '') == '1':
+            groups = groups.reverse()
+
+    # paginate groups
+    paginator = Paginator(groups, 3)
+    page = request.GET.get('page')
+    try:
+        groups = paginator.page(page)
+    except PageNotAnInteger:
+        groups = paginator.page(1)
+    except EmptyPage:
+        groups = paginator.page(paginator.num_pages)
 
     return render(request, 'students/groups_list.html',
                   {"groups": groups})
