@@ -80,3 +80,10 @@
 .buttonsClass {
   padding-left: 15%;
 }
+
+/* Form Styles */
+textarea,
+select,
+input {
+  max-width: 300px;
+}
