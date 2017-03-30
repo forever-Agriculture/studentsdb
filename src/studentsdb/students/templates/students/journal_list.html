@@ -56,8 +56,8 @@
             {% for hookey in hookeys %}
             <tr>
               <td>{{ forloop.counter }}</td>
-              <td><a href="{% url "students_edit" hookey.student_hookey %}">
-                {{ hookey.student_hookey }}</a></td>
+              <td><a href="{% url "students_edit" hookey %}">
+                {{ student.id }}</a></td>
               <td>
                 <label>
                   <input type="checkbox" id="blankCheckbox" value="option1" aria-label="...">

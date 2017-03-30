@@ -1,2 +1,3 @@
 Pillow
-MySQL-python
+django-crispy-forms
+python-dateutil

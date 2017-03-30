@@ -3,11 +3,26 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from datetime import datetime
-from .models import Student, Group, Journal
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from dateutil.relativedelta import relativedelta
+from calendar import monthrange, weekday, day_abbr
+from django.forms import ModelForm
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic.base import TemplateView
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from crispy_forms.bootstrap import FormActions
+from datetime import datetime, date
+from .models import Student, Group, MonthJournal
+from .util import paginate
+
 
 # Create your views here.
+
+
+
+
+
 
     # Students
 
@@ -101,29 +116,74 @@ def students_add(request):
                 # save it to the database
                 student.save()
                 # redirect user to students list
-                return HttpResponseRedirect(u'%s?status_message=Студент успішно доданий!' %
-                                            reverse('home'))
+                return HttpResponseRedirect(u'{}?status_message=Студент успішно доданий!'.format(reverse('home')))
+
             else:
             # render form with errors and previous user input
                 return render(request, 'students/students_add.html',
                               {'groups': Group.objects.all().order_by('title'),
                                'errors': errors})
 
-        elif  request.POST.get('cancel_button') is not None:
+        elif request.POST.get('cancel_button') is not None:
             # redirect to home page on cancel button
-            return HttpResponseRedirect(u'%s?status_message=Додавання студента скасоване!' %
-                                            reverse('home'))
+            return HttpResponseRedirect(u'{}?status_message=Додавання студента скасоване!'.format(reverse('home')))
     else:
         # initial form render
         return render(request, 'students/students_add.html',
                     {'groups': Group.objects.all().order_by('title')})
 
 
-def students_edit(request, sid):
-    return HttpResponse('<h1>Edit Student %s</h1>' % sid)
+class StudentUpdateForm(ModelForm):
+    class Meta:
+        model = Student
+        fields = '__all__'
 
-def students_delete(request, sid):
-    return HttpResponse('<h1>Delete Student %s</h1>' % sid)
+    def __init__(self, *args, **kwargs):
+        super(StudentUpdateForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        # set form tag attributes
+        self.helper.form_action = reverse('students_edit', kwargs={'pk': kwargs['instance'].id})
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        # set form field properties
+        self.helper.help_text_inline = True
+        self.helper.html5_required = True
+        self.helper.label_class = 'col-sm-w control-label'
+        self.helper.field_class = 'col-sm-10'
+        # add buttons
+        self.helper.layout[-1] = FormActions(
+            Submit('add_button', u'Зберегти', css_class="btn btn-primary"),
+            Submit('cancel_button', u'Скасувати', css_class="btn btn-link")
+        )
+
+class StudentUpdateView(UpdateView):
+    model = Student
+    fields = '__all__'
+    template_name = 'students/students_edit.html'
+
+    def get_success_url(self):
+        return u'{}?status_message=Студент відредагований!'.format(reverse('home'))
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel_button'):
+            return HttpResponseRedirect(u'{}?status_message=Редагування студента скасоване!'.format(reverse('home')))
+        else:
+            return super(StudentUpdateView, self).post(request, *args, **kwargs)
+
+class StudentDeleteView(DeleteView):
+    model = Student
+    fields = '__all__'
+    template_name = 'students/students_confirm_delete.html'
+
+    def get_success_url(self):
+        return u'{}?status_message=Студент успішно видалений!'.format(reverse('home'))
+
+
+
+
+
+
 
     # Groups
 
@@ -150,19 +210,160 @@ def groups_list(request):
     return render(request, 'students/groups_list.html',
                   {'groups': groups})
 
+# class GroupCreateView(CreateView):
+#    model = Group
+#    fields = '__all__'
+#    template_name = 'students/groups_add.html'
+#
+#    def get_success_url(self):
+#        return u'{}?status_message=Групу успішно додано!'.format(reverse('groups'))
+#
+#    def post(self, request, *args, **kwargs):
+#        if request.POST.get('cancel_button'):
+#            return HttpResponseRedirect(u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups')))
+#        else:
+#            return super(GroupCreateView, self).post(request, *args, **kwargs)
+
 def groups_add(request):
-    return HttpResponse('<h1>Group Add Form</h1>')
 
-def groups_edit(request, gid):
-    return HttpResponse('<h1>Edit Group %s</h1>' % gid)
+    # if the form was posted
+    if request.method == "POST":
 
-def groups_delete(request, gid):
-    return HttpResponse('<h1>Delete Group %s</h1>' % gid)
+        # if Add button was pressed
+        if request.POST.get('add_button') is not None:
+            # check the data
+            errors = {}
+            # validate student data will go here
+            data = {'notes': request.POST.get('notes')}
+            # validate user input
+            title = request.POST.get('title', '').strip()
+            if not title:
+                errors['title'] = u"Назва є обов'язковою"
+            else:
+                data['title'] = title
+            leader = request.POST.get('leader', '').strip()
+            if not leader:
+                errors['leader'] = u"Оберіть старосту групи"
+            else:
+                students = Student.objects.filter(pk=leader)
+                if len(students) != 1:
+                    errors['leader'] = u"Оберіть групу для студента"
+                else:
+                    data['leader'] = students[0]
+
+            if not errors:
+                # create student object
+                group = Group(**data)
+          #      group = Group(
+           #         title=request.POST['title'],
+             #       ticket=request.POST['ticket'],
+             #       leader=Student.objects.get(pk=request.POST['leader']),
+             #   )
+                # save it to the database
+                group.save()
+                # redirect user to students list
+                return HttpResponseRedirect(u'{}?status_message=Групу успишно додано!'.format(reverse('groups')))
+
+            else:
+            # render form with errors and previous user input
+                return render(request, 'students/groups_add.html',
+                              {'students': Student.objects.all().order_by('student_group'),
+                               'errors': errors})
+
+        elif request.POST.get('cancel_button') is not None:
+            # redirect to home page on cancel button
+            return HttpResponseRedirect(u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups')))
+    else:
+        # initial form render
+        return render(request, 'students/groups_add.html',
+                    {'students': Student.objects.all().order_by('student_group')})
+
+class GroupUpdateView(UpdateView):
+    model = Group
+    fields = '__all__'
+    template_name = 'students/groups_edit.html'
+
+    def get_success_url(self):
+        return u'{}?status_message=Групу успішно відредаговано!'.format(reverse('groups'))
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel_button'):
+            return HttpResponseRedirect(u'{}?status_message=Редагування групи скасоване!'.format(reverse('groups')))
+        else:
+            return super(GroupUpdateView, self).post(request, *args, **kwargs)
+
+class GroupDeleteView(DeleteView):
+    model = Group
+    fields = '__all__'
+    template_name = 'students/groups_confirm_delete.html'
+
+    def get_success_url(self):
+        return u'{}?status_message=Група успішно видалена!'.format(reverse('groups'))
+
+
+
+
+
+
+
+
 
     # Journal
 
-def journal_list(request):
-    hookeys = Journal.objects.all()
+class JournalView(TemplateView):
+    template_name = 'students/journal.html'
 
-    return render(request, 'students/journal_list.html',
-                  {'hookeys': hookeys})
+    def get_context_data(self, **kwargs):
+        # get context data from TemplateView class
+        context = super(JournalView, self).get_context_data(**kwargs)
+
+        if self.request.GET.get('month'):
+            month = datetime.strptime(self.request.GET['month'], '%Y-%m-%d').date()
+        else:
+            today = datetime.today()
+            month = date(today.year, today.month, 1)
+
+        next_month = month + relativedelta(months=1)
+        prev_month = month - relativedelta(months=1)
+        context['prev_month'] = prev_month.strftime('%Y-%m-%d')
+        context['next_month'] = next_month.strftime('%Y-%m-%d')
+        context['year'] = month.year
+        context['month_verbose'] = month.strftime('%B')
+
+        context['cur_month'] = month.strftime('%Y-%m-%d')
+
+        myear, mmonth = month.year, month.month
+        number_of_days = monthrange(myear, mmonth)[1]
+        context['month_header'] = [{'day': d,
+                                    'verbose': day_abbr[weekday(myear, mmonth, d)][:2]}
+                                   for d in range(1, number_of_days + 1)]
+
+        queryset = Student.objects.order_by('last_name')
+
+        update_url = reverse('journal')
+
+        students = []
+        for student in queryset:
+            try:
+                journal = MonthJournal.objects.get(student=student, date=month)
+            except Exception:
+                journal = None
+
+            days = []
+            for day in range(1, number_of_days + 1):
+                days.append({
+                'day': day,
+                'present': journal and getattr(journal, 'present_day{}'.format(day), False) or False,
+                    'date': date(myear, mmonth, day).strftime('%Y-%m-%d'),
+                })
+
+            students.append({
+            'fullname': u'{} {}'.format(student.last_name, student.first_name),
+            'days': days,
+            'id': student.id,
+            'update_url': update_url,
+            })
+
+            context = paginate(students, 10, self.request, context, var_name='students')
+
+            return context
