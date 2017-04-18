@@ -78,11 +78,8 @@ WSGI_APPLICATION = 'studentsdb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'students_db',
-        'USER': 'students_db_user',
-        'PASSWORD': 'password22',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, '..', 'db.sqlite3'),
     }
 }
 
@@ -129,3 +126,9 @@ PORTAL_URL = 'http://localhost:8000'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'media')
+
+# import database
+try:
+    from local_settings import *
+except ImportError:
+    pass
