@@ -15,7 +15,7 @@
 
 {% else %}
 
-<p id=”journal-nav” class=”text-center”>
+<p id="journal-nav" class="text-center">
     <a href="?month={{ prev_month }}"
        title="Попередній місяць">&larr;</a>
     <!-- TODO: translate month name -->
@@ -25,14 +25,14 @@
 </p>
 
 <table class="table table-hover table-striped table-bordered"
-       id=”students-journal”>
+       id="students-journal">
 
     <thead>
-        <tr class=”header”>
-            <th class=”num”>#</th>
+        <tr class="header">
+            <th class="num">#</th>
             <th class=”name”>Студент</th>
             {% for day in month_header %}
-            <th class=”day-header”>
+            <th class="day-header">
                 <!-- TODO: translate day name -->
                 {{ day.verbose }}
                 <br />
@@ -55,15 +55,15 @@
                 {% endif %}
             </td>
             <td>
-                <a title=”Редагувати" target=”_blank” href="{% url "students_edit" student.id %}">
+                <a title=”Редагувати" target="_blank" href="{% url "students_edit" student.id %}">
                 {{ student.fullname }}
                 </a>
             </td>
             {% for day in student.days %}
-            <td class=”day-box”>
+            <td class="day-box">
                 <input type="checkbox" data-student-id="{{ student.id }}"
                     data-date="{{ day.date }}" data-url="{{ student.update_url }}"
-                    value=”1”{% if day.present %} checked="checked" {% endif %} />
+                    value="1"{% if day.present %} checked="checked" {% endif %} />
             </td>
             {% endfor %}
         </tr>

@@ -10,8 +10,8 @@ from django.forms import ModelForm
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic.base import TemplateView
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-from crispy_forms.bootstrap import FormActions
+# from crispy_forms.bootstrap import FormActions
+# from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
 from datetime import datetime, date
 from .models import Student, Group, MonthJournal
 from .util import paginate
@@ -116,7 +116,9 @@ def students_add(request):
                 # save it to the database
                 student.save()
                 # redirect user to students list
-                return HttpResponseRedirect(u'{}?status_message=Студент успішно доданий!'.format(reverse('home')))
+                return HttpResponseRedirect(
+                    u'{}?status_message=Студент успішно доданий!'.format(reverse('home'))
+                    )
 
             else:
             # render form with errors and previous user input
@@ -126,11 +128,13 @@ def students_add(request):
 
         elif request.POST.get('cancel_button') is not None:
             # redirect to home page on cancel button
-            return HttpResponseRedirect(u'{}?status_message=Додавання студента скасоване!'.format(reverse('home')))
+            return HttpResponseRedirect(
+                u'{}?status_message=Додавання студента скасоване!'.format(reverse('home'))
+                )
     else:
         # initial form render
         return render(request, 'students/students_add.html',
-                    {'groups': Group.objects.all().order_by('title')})
+                      {'groups': Group.objects.all().order_by('title')})
 
 
 class StudentUpdateForm(ModelForm):
@@ -142,20 +146,24 @@ class StudentUpdateForm(ModelForm):
         super(StudentUpdateForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper(self)
+
         # set form tag attributes
-        self.helper.form_action = reverse('students_edit', kwargs={'pk': kwargs['instance'].id})
+        self.helper.form_action = reverse('students_edit',
+                                          kwargs={'pk': kwargs['instance'].id})
         self.helper.form_method = 'POST'
         self.helper.form_class = 'form-horizontal'
+
         # set form field properties
         self.helper.help_text_inline = True
         self.helper.html5_required = True
-        self.helper.label_class = 'col-sm-w control-label'
+        self.helper.label_class = 'col-sm-2 control-label'
         self.helper.field_class = 'col-sm-10'
+
         # add buttons
-        self.helper.layout[-1] = FormActions(
-            Submit('add_button', u'Зберегти', css_class="btn btn-primary"),
-            Submit('cancel_button', u'Скасувати', css_class="btn btn-link")
-        )
+        # self.helper.layout[-1] = FormActions(
+        #     Submit('add_button', u'Зберегти', css_class="btn btn-primary"),
+        #     Submit('cancel_button', u'Скасувати', css_class="btn btn-link"),
+        # )
 
 class StudentUpdateView(UpdateView):
     model = Student
@@ -166,8 +174,10 @@ class StudentUpdateView(UpdateView):
         return u'{}?status_message=Студент відредагований!'.format(reverse('home'))
 
     def post(self, request, *args, **kwargs):
-        if request.POST.get('cancel_button'):
-            return HttpResponseRedirect(u'{}?status_message=Редагування студента скасоване!'.format(reverse('home')))
+        if request.POST.get('cancel_button') is not None:
+            return HttpResponseRedirect(
+                u'{}?status_message=Редагування студента скасоване!'.format(reverse('home'))
+                )
         else:
             return super(StudentUpdateView, self).post(request, *args, **kwargs)
 
@@ -220,7 +230,9 @@ def groups_list(request):
 #
 #    def post(self, request, *args, **kwargs):
 #        if request.POST.get('cancel_button'):
-#            return HttpResponseRedirect(u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups')))
+#            return HttpResponseRedirect(
+#               u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups'))
+#               )
 #        else:
 #            return super(GroupCreateView, self).post(request, *args, **kwargs)
 
@@ -262,7 +274,9 @@ def groups_add(request):
                 # save it to the database
                 group.save()
                 # redirect user to students list
-                return HttpResponseRedirect(u'{}?status_message=Групу успишно додано!'.format(reverse('groups')))
+                return HttpResponseRedirect(
+                    u'{}?status_message=Групу успишно додано!'.format(reverse('groups'))
+                    )
 
             else:
             # render form with errors and previous user input
@@ -272,11 +286,13 @@ def groups_add(request):
 
         elif request.POST.get('cancel_button') is not None:
             # redirect to home page on cancel button
-            return HttpResponseRedirect(u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups')))
+            return HttpResponseRedirect(
+                u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups'))
+                )
     else:
         # initial form render
         return render(request, 'students/groups_add.html',
-                    {'students': Student.objects.all().order_by('student_group')})
+                      {'students': Student.objects.all().order_by('student_group')})
 
 class GroupUpdateView(UpdateView):
     model = Group
@@ -288,7 +304,9 @@ class GroupUpdateView(UpdateView):
 
     def post(self, request, *args, **kwargs):
         if request.POST.get('cancel_button'):
-            return HttpResponseRedirect(u'{}?status_message=Редагування групи скасоване!'.format(reverse('groups')))
+            return HttpResponseRedirect(
+                u'{}?status_message=Редагування групи скасоване!'.format(reverse('groups'))
+                )
         else:
             return super(GroupUpdateView, self).post(request, *args, **kwargs)
 
@@ -352,16 +370,17 @@ class JournalView(TemplateView):
             days = []
             for day in range(1, number_of_days + 1):
                 days.append({
-                'day': day,
-                'present': journal and getattr(journal, 'present_day{}'.format(day), False) or False,
+                    'day': day,
+                    'present': journal and getattr(journal, 'present_day{}'.format(day),
+                                                   False) or False,
                     'date': date(myear, mmonth, day).strftime('%Y-%m-%d'),
                 })
 
             students.append({
-            'fullname': u'{} {}'.format(student.last_name, student.first_name),
-            'days': days,
-            'id': student.id,
-            'update_url': update_url,
+                'fullname': u'{} {}'.format(student.last_name, student.first_name),
+                'days': days,
+                'id': student.id,
+                'update_url': update_url,
             })
 
             context = paginate(students, 10, self.request, context, var_name='students')
