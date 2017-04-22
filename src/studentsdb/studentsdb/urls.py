@@ -18,15 +18,17 @@ from django.contrib import admin
 from students import views
 from django.conf import settings
 from django.conf.urls.static import static
-from students.views import StudentUpdateView, StudentDeleteView, GroupUpdateView, GroupDeleteView, JournalView
+from students.views import StudentUpdateView, StudentDeleteView, GroupUpdateView, GroupDeleteView, StudentsListView, JournalView
 
 
 urlpatterns = [
 
     # Students
 
-    url(r'^$', views.students_list, name='home'),
+    # url(r'^$', views.students_list, name='home'),
+    url(r'^$', StudentsListView.as_view(), name='home'),
     url(r'^students/add/$', views.students_add, name='students_add'),
+    # url(r'^students/add/$', StudentCreateForm.as_view(), name='students_add'),
     url(r'^students/(?P<pk>\d+)/edit/$', StudentUpdateView.as_view(), name='students_edit'),
     url(r'^students/(?P<pk>\d+)/delete/$', StudentDeleteView.as_view(), name='students_delete'),
 

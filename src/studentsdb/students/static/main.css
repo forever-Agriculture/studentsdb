@@ -95,3 +95,8 @@ th.day-header {
   vertical-align: middle !important;
   text-align: center;
 }
+
+/* Pagination */
+nav.customPagination {
+    text-align: center !important;
+}

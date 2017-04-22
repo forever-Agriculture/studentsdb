@@ -1,53 +1,73 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render
+# kinda important imports
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from dateutil.relativedelta import relativedelta
-from calendar import monthrange, weekday, day_abbr
-from django.forms import ModelForm
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.shortcuts import render
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.views.generic.base import TemplateView
-from crispy_forms.helper import FormHelper
-# from crispy_forms.bootstrap import FormActions
-# from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
-from datetime import datetime, date
+from django.forms import ModelForm
+
 from .models import Student, Group, MonthJournal
 from .util import paginate
+
+# trash imports
+from dateutil.relativedelta import relativedelta
+from calendar import monthrange, weekday, day_abbr
+from crispy_forms.helper import FormHelper
+from datetime import datetime, date
 
 
 # Create your views here.
 
 
-
-
-
-
     # Students
 
-def students_list(request):
-    students = Student.objects.all()
+# def students_list(request):
+#     students = Student.objects.all()
+#
+#     # try to order students list
+#     order_by = request.GET.get('order_by', 'last_name')
+#     if order_by in ('last_name', 'first_name', 'ticket'):
+#         students = students.order_by(order_by)
+#         if request.GET.get('reverse', '') == '1':
+#             students = students.reverse()
+#
+#     # paginate students
+#     paginator = Paginator(students, 5)
+#     page = request.GET.get('page')
+#     try:
+#         students = paginator.page(page)
+#     except PageNotAnInteger:
+#         students = paginator.page(1)
+#     except EmptyPage:
+#         students = paginator.page(paginator.num_pages)
+#
+#     return render(request, 'students/students_list.html',
+#                   {'students': students})
 
-    # try to order students list
-    order_by = request.GET.get('order_by', 'last_name')
-    if order_by in ('last_name', 'first_name', 'ticket'):
-        students = students.order_by(order_by)
-        if request.GET.get('reverse', '') == '1':
-            students = students.reverse()
+class StudentsListView(ListView):
+    template_name = 'students/students_list.html'
+    queryset = Student.objects.all()
+    context_object_name = 'students_list'
+    paginate_by = 5
 
-    # paginate students
-    paginator = Paginator(students, 5)
-    page = request.GET.get('page')
-    try:
-        students = paginator.page(page)
-    except PageNotAnInteger:
-        students = paginator.page(1)
-    except EmptyPage:
-        students = paginator.page(paginator.num_pages)
+    def get_reverse_order(self):
+        order_by = self.request.GET.get('order_by', 'last_name')
+        # order_by = self.queryset.order_by('order_by', 'last_name')
+        if order_by in ('last_name', 'first_name', 'ticket'):
+            self.queryset = self.queryset.order_by(order_by)
+            if self.request.GET.get('reverse', '') == '1':
+                self.queryset = self.queryset.reverse()
+        return order_by
 
-    return render(request, 'students/students_list.html',
-                  {'students': students})
+    def get_context_data(self, **kwargs):
+        context = super(StudentsListView, self).get_context_data(**kwargs)
+        context['students_range'] = range(context["paginator"].num_pages)
+        context['order_by'] = self.get_reverse_order()
+        return context
+
 
 
 def students_add(request):
@@ -137,6 +157,22 @@ def students_add(request):
                       {'groups': Group.objects.all().order_by('title')})
 
 
+# class StudentCreateForm(CreateView):
+#         model = Student
+#         fields = '__all__'
+#
+#         def get_success_url(self):
+#             return u'{}?status_message=Студент доданий!'.format(reverse('home'))
+#
+#         def post(self, request, *args, **kwargs):
+#             if request.POST.get('cancel_button') is not None:
+#                 return HttpResponseRedirect(
+#                     u'{}?status_message=Додавання студента скасоване!'.format(reverse('home'))
+#                 )
+#             else:
+#                 return super(StudentCreateForm, self).post(request, *args, **kwargs)
+
+
 class StudentUpdateForm(ModelForm):
     class Meta:
         model = Student
@@ -159,11 +195,6 @@ class StudentUpdateForm(ModelForm):
         self.helper.label_class = 'col-sm-2 control-label'
         self.helper.field_class = 'col-sm-10'
 
-        # add buttons
-        # self.helper.layout[-1] = FormActions(
-        #     Submit('add_button', u'Зберегти', css_class="btn btn-primary"),
-        #     Submit('cancel_button', u'Скасувати', css_class="btn btn-link"),
-        # )
 
 class StudentUpdateView(UpdateView):
     model = Student
@@ -188,11 +219,6 @@ class StudentDeleteView(DeleteView):
 
     def get_success_url(self):
         return u'{}?status_message=Студент успішно видалений!'.format(reverse('home'))
-
-
-
-
-
 
 
     # Groups
@@ -317,13 +343,6 @@ class GroupDeleteView(DeleteView):
 
     def get_success_url(self):
         return u'{}?status_message=Група успішно видалена!'.format(reverse('groups'))
-
-
-
-
-
-
-
 
 
     # Journal
