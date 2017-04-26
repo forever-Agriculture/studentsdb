@@ -275,12 +275,12 @@ class GroupCreateView(CreateView):
     fields = '__all__'
 
     def get_success_url(self):
-        return u'{}?status_message=Студент доданий!'.format(reverse('groups'))
+        return u'{}?status_message=Група додана!'.format(reverse('groups'))
 
     def post(self, request, *args, **kwargs):
         if request.POST.get('cancel_button') is not None:
             return HttpResponseRedirect(
-                u'{}?status_message=Додавання студента скасоване!'.format(reverse('groups'))
+                u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups'))
             )
         else:
             return super(GroupCreateView, self).post(request, *args, **kwargs)
