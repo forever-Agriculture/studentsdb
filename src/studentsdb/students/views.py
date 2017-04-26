@@ -53,19 +53,18 @@ class StudentsListView(ListView):
     context_object_name = 'students_list'
     paginate_by = 5
 
-    def get_reverse_order(self):
+    def get_queryset(self):
+        queryset = super(StudentsListView, self).get_queryset()
         order_by = self.request.GET.get('order_by', 'last_name')
-        # order_by = self.queryset.order_by('order_by', 'last_name')
         if order_by in ('last_name', 'first_name', 'ticket'):
-            self.queryset = self.queryset.order_by(order_by)
+            queryset = queryset.order_by(order_by)
             if self.request.GET.get('reverse', '') == '1':
-                self.queryset = self.queryset.reverse()
-        return order_by
+                queryset = queryset.reverse()
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(StudentsListView, self).get_context_data(**kwargs)
         context['students_range'] = range(context["paginator"].num_pages)
-        context['order_by'] = self.get_reverse_order()
         return context
 
 
