@@ -70,130 +70,131 @@ class StudentsListView(ListView):
 
 
 
-def students_add(request):
+# def students_add(request):
+#
+#     # if the form was posted
+#     if request.method == "POST":
+#
+#         # if Add button was pressed
+#         if request.POST.get('add_button') is not None:
+#             # check the data
+#             errors = {}
+#             # validate student data will go here
+#             data = {'middle_name': request.POST.get('middle_name'),
+#                     'notes': request.POST.get('notes')}
+#             # validate user input
+#             first_name = request.POST.get('first_name', '').strip()
+#             if not first_name:
+#                 errors['first_name'] = u"Ім'я є обов'язковим"
+#             else:
+#                 data['first_name'] = first_name
+#             last_name = request.POST.get('last_name', '').strip()
+#             if not last_name:
+#                 errors['last_name'] = u"Прізвище є обов'язковим"
+#             else:
+#                 data['last_name'] = last_name
+#             birthday = request.POST.get('birthday', '').strip()
+#             if not birthday:
+#                 errors['birthday'] = u"День народження є обов'язковим"
+#             else:
+#                 data['birthday'] = birthday
+#             ticket = request.POST.get('ticket', '').strip()
+#             if not ticket:
+#                 errors['ticket'] = u"Квиток є обов'язковим"
+#             else:
+#                 try:
+#                     datetime.strptime(birthday, '%Y-%m-%d')
+#                 except Exception:
+#                     errors['birthday'] = u"Введіть коректний формат (1998-12-30)"
+#                 else:
+#                     data['birthday'] = birthday
+#             student_group = request.POST.get('student_group', '').strip()
+#             if not student_group:
+#                 errors['student_group'] = u"Оберіть групу для студента"
+#             else:
+#                 groups = Group.objects.filter(pk=student_group)
+#                 if len(groups) != 1:
+#                     errors['student_group'] = u"Оберіть групу для студента"
+#                 else:
+#                     data['student_group'] = groups[0]
+#             photo = request.FILES.get('photo')
+#             if photo:
+#                 data['photo'] = photo
+#
+#             if not errors:
+#                 # create student object
+#                 student = Student(**data)
+#           #      student = Student(
+#            #         first_name=request.POST['first_name'],
+#             #        last_name=request.POST['last_name'],
+#             #        middle_name=request.POST['middle_name'],
+#              #       birthday=request.POST['birthday'],
+#              #       ticket=request.POST['ticket'],
+#              #       student_group=Group.objects.get(pk=request.POST['student_group']),
+#              #       photo=request.FILES['photo'],
+#              #   )
+#                 # save it to the database
+#                 student.save()
+#                 # redirect user to students list
+#                 return HttpResponseRedirect(
+#                     u'{}?status_message=Студент успішно доданий!'.format(reverse('home'))
+#                     )
+#
+#             else:
+#             # render form with errors and previous user input
+#                 return render(request, 'students/students_add.html',
+#                               {'groups': Group.objects.all().order_by('title'),
+#                                'errors': errors})
+#
+#         elif request.POST.get('cancel_button') is not None:
+#             # redirect to home page on cancel button
+#             return HttpResponseRedirect(
+#                 u'{}?status_message=Додавання студента скасоване!'.format(reverse('home'))
+#                 )
+#     else:
+#         # initial form render
+#         return render(request, 'students/students_add.html',
+#                       {'groups': Group.objects.all().order_by('title')})
 
-    # if the form was posted
-    if request.method == "POST":
 
-        # if Add button was pressed
-        if request.POST.get('add_button') is not None:
-            # check the data
-            errors = {}
-            # validate student data will go here
-            data = {'middle_name': request.POST.get('middle_name'),
-                    'notes': request.POST.get('notes')}
-            # validate user input
-            first_name = request.POST.get('first_name', '').strip()
-            if not first_name:
-                errors['first_name'] = u"Ім'я є обов'язковим"
-            else:
-                data['first_name'] = first_name
-            last_name = request.POST.get('last_name', '').strip()
-            if not last_name:
-                errors['last_name'] = u"Прізвище є обов'язковим"
-            else:
-                data['last_name'] = last_name
-            birthday = request.POST.get('birthday', '').strip()
-            if not birthday:
-                errors['birthday'] = u"День народження є обов'язковим"
-            else:
-                data['birthday'] = birthday
-            ticket = request.POST.get('ticket', '').strip()
-            if not ticket:
-                errors['ticket'] = u"Квиток є обов'язковим"
-            else:
-                try:
-                    datetime.strptime(birthday, '%Y-%m-%d')
-                except Exception:
-                    errors['birthday'] = u"Введіть коректний формат (1998-12-30)"
-                else:
-                    data['birthday'] = birthday
-            student_group = request.POST.get('student_group', '').strip()
-            if not student_group:
-                errors['student_group'] = u"Оберіть групу для студента"
-            else:
-                groups = Group.objects.filter(pk=student_group)
-                if len(groups) != 1:
-                    errors['student_group'] = u"Оберіть групу для студента"
-                else:
-                    data['student_group'] = groups[0]
-            photo = request.FILES.get('photo')
-            if photo:
-                data['photo'] = photo
+class StudentCreateView(CreateView):
+        queryset = Student.objects.all()
+        template_name = 'students/students_add.html'
+        fields = '__all__'
 
-            if not errors:
-                # create student object
-                student = Student(**data)
-          #      student = Student(
-           #         first_name=request.POST['first_name'],
-            #        last_name=request.POST['last_name'],
-            #        middle_name=request.POST['middle_name'],
-             #       birthday=request.POST['birthday'],
-             #       ticket=request.POST['ticket'],
-             #       student_group=Group.objects.get(pk=request.POST['student_group']),
-             #       photo=request.FILES['photo'],
-             #   )
-                # save it to the database
-                student.save()
-                # redirect user to students list
+        def get_success_url(self):
+            return u'{}?status_message=Студент доданий!'.format(reverse('home'))
+
+        def post(self, request, *args, **kwargs):
+            if request.POST.get('cancel_button') is not None:
                 return HttpResponseRedirect(
-                    u'{}?status_message=Студент успішно доданий!'.format(reverse('home'))
-                    )
-
-            else:
-            # render form with errors and previous user input
-                return render(request, 'students/students_add.html',
-                              {'groups': Group.objects.all().order_by('title'),
-                               'errors': errors})
-
-        elif request.POST.get('cancel_button') is not None:
-            # redirect to home page on cancel button
-            return HttpResponseRedirect(
-                u'{}?status_message=Додавання студента скасоване!'.format(reverse('home'))
+                    u'{}?status_message=Додавання студента скасоване!'.format(reverse('home'))
                 )
-    else:
-        # initial form render
-        return render(request, 'students/students_add.html',
-                      {'groups': Group.objects.all().order_by('title')})
+            else:
+                return super(StudentCreateView, self).post(request, *args, **kwargs)
 
 
-# class StudentCreateForm(CreateView):
+# class StudentUpdateForm(ModelForm):
+#     class Meta:
 #         model = Student
 #         fields = '__all__'
 #
-#         def get_success_url(self):
-#             return u'{}?status_message=Студент доданий!'.format(reverse('home'))
+#     def __init__(self, *args, **kwargs):
+#         super(StudentUpdateForm, self).__init__(*args, **kwargs)
 #
-#         def post(self, request, *args, **kwargs):
-#             if request.POST.get('cancel_button') is not None:
-#                 return HttpResponseRedirect(
-#                     u'{}?status_message=Додавання студента скасоване!'.format(reverse('home'))
-#                 )
-#             else:
-#                 return super(StudentCreateForm, self).post(request, *args, **kwargs)
-
-
-class StudentUpdateForm(ModelForm):
-    class Meta:
-        model = Student
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(StudentUpdateForm, self).__init__(*args, **kwargs)
-
-        self.helper = FormHelper(self)
-
-        # set form tag attributes
-        self.helper.form_action = reverse('students_edit',
-                                          kwargs={'pk': kwargs['instance'].id})
-        self.helper.form_method = 'POST'
-        self.helper.form_class = 'form-horizontal'
-
-        # set form field properties
-        self.helper.help_text_inline = True
-        self.helper.html5_required = True
-        self.helper.label_class = 'col-sm-2 control-label'
-        self.helper.field_class = 'col-sm-10'
+#         self.helper = FormHelper(self)
+#
+#         # set form tag attributes
+#         self.helper.form_action = reverse('students_edit',
+#                                           kwargs={'pk': kwargs['instance'].id})
+#         self.helper.form_method = 'POST'
+#         self.helper.form_class = 'form-horizontal'
+#
+#         # set form field properties
+#         self.helper.help_text_inline = True
+#         self.helper.html5_required = True
+#         self.helper.label_class = 'col-sm-2 control-label'
+#         self.helper.field_class = 'col-sm-10'
 
 
 class StudentUpdateView(UpdateView):
@@ -212,6 +213,7 @@ class StudentUpdateView(UpdateView):
         else:
             return super(StudentUpdateView, self).post(request, *args, **kwargs)
 
+
 class StudentDeleteView(DeleteView):
     model = Student
     fields = '__all__'
@@ -223,102 +225,124 @@ class StudentDeleteView(DeleteView):
 
     # Groups
 
-def groups_list(request):
-    groups = Group.objects.all()
-
-    # try to order students list
-    order_by = request.GET.get('order_by', 'title')
-    if order_by in ('leader', 'title'):
-        groups = groups.order_by(order_by)
-        if request.GET.get('reverse', '') == '1':
-            groups = groups.reverse()
-
-    # paginate groups
-    paginator = Paginator(groups, 3)
-    page = request.GET.get('page')
-    try:
-        groups = paginator.page(page)
-    except PageNotAnInteger:
-        groups = paginator.page(1)
-    except EmptyPage:
-        groups = paginator.page(paginator.num_pages)
-
-    return render(request, 'students/groups_list.html',
-                  {'groups': groups})
-
-# class GroupCreateView(CreateView):
-#    model = Group
-#    fields = '__all__'
-#    template_name = 'students/groups_add.html'
+# def groups_list(request):
+#     groups = Group.objects.all()
 #
-#    def get_success_url(self):
-#        return u'{}?status_message=Групу успішно додано!'.format(reverse('groups'))
+#     # try to order students list
+#     order_by = request.GET.get('order_by', 'title')
+#     if order_by in ('leader', 'title'):
+#         groups = groups.order_by(order_by)
+#         if request.GET.get('reverse', '') == '1':
+#             groups = groups.reverse()
 #
-#    def post(self, request, *args, **kwargs):
-#        if request.POST.get('cancel_button'):
-#            return HttpResponseRedirect(
-#               u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups'))
-#               )
-#        else:
-#            return super(GroupCreateView, self).post(request, *args, **kwargs)
+#     # paginate groups
+#     paginator = Paginator(groups, 3)
+#     page = request.GET.get('page')
+#     try:
+#         groups = paginator.page(page)
+#     except PageNotAnInteger:
+#         groups = paginator.page(1)
+#     except EmptyPage:
+#         groups = paginator.page(paginator.num_pages)
+#
+#     return render(request, 'students/groups_list.html',
+#                   {'groups': groups})
 
-def groups_add(request):
+class GroupsListView(ListView):
+    queryset = Group.objects.all()
+    template_name = 'students/groups_list.html'
+    context_object_name = 'groups_list'
+    paginate_by = 3
 
-    # if the form was posted
-    if request.method == "POST":
+    def get_reverse_order(self):
+        order_by = self.request.GET.get('order_by', 'title')
+        if order_by in ('leader', 'title'):
+            self.queryset = self.queryset.order_by(order_by)
+            if self.request.GET.get('reverse', '') == '1':
+                self.queryset = self.queryset.reverse()
+        return order_by
 
-        # if Add button was pressed
-        if request.POST.get('add_button') is not None:
-            # check the data
-            errors = {}
-            # validate student data will go here
-            data = {'notes': request.POST.get('notes')}
-            # validate user input
-            title = request.POST.get('title', '').strip()
-            if not title:
-                errors['title'] = u"Назва є обов'язковою"
-            else:
-                data['title'] = title
-            leader = request.POST.get('leader', '').strip()
-            if not leader:
-                errors['leader'] = u"Оберіть старосту групи"
-            else:
-                students = Student.objects.filter(pk=leader)
-                if len(students) != 1:
-                    errors['leader'] = u"Оберіть групу для студента"
-                else:
-                    data['leader'] = students[0]
+    def get_context_data(self, **kwargs):
+        context = super(GroupsListView, self).get_context_data(**kwargs)
+        context['groups_range'] = range(context["paginator"].num_pages)
+        context['order_by'] = self.get_reverse_order()
+        return context
 
-            if not errors:
-                # create student object
-                group = Group(**data)
-          #      group = Group(
-           #         title=request.POST['title'],
-             #       ticket=request.POST['ticket'],
-             #       leader=Student.objects.get(pk=request.POST['leader']),
-             #   )
-                # save it to the database
-                group.save()
-                # redirect user to students list
-                return HttpResponseRedirect(
-                    u'{}?status_message=Групу успишно додано!'.format(reverse('groups'))
-                    )
 
-            else:
-            # render form with errors and previous user input
-                return render(request, 'students/groups_add.html',
-                              {'students': Student.objects.all().order_by('student_group'),
-                               'errors': errors})
+class GroupCreateView(CreateView):
+    queryset = Group.objects.all()
+    template_name = 'students/groups_add.html'
+    fields = '__all__'
 
-        elif request.POST.get('cancel_button') is not None:
-            # redirect to home page on cancel button
+    def get_success_url(self):
+        return u'{}?status_message=Студент доданий!'.format(reverse('groups'))
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel_button') is not None:
             return HttpResponseRedirect(
-                u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups'))
-                )
-    else:
-        # initial form render
-        return render(request, 'students/groups_add.html',
-                      {'students': Student.objects.all().order_by('student_group')})
+                u'{}?status_message=Додавання студента скасоване!'.format(reverse('groups'))
+            )
+        else:
+            return super(GroupCreateView, self).post(request, *args, **kwargs)
+
+
+# def groups_add(request):
+#
+#     # if the form was posted
+#     if request.method == "POST":
+#
+#         # if Add button was pressed
+#         if request.POST.get('add_button') is not None:
+#             # check the data
+#             errors = {}
+#             # validate student data will go here
+#             data = {'notes': request.POST.get('notes')}
+#             # validate user input
+#             title = request.POST.get('title', '').strip()
+#             if not title:
+#                 errors['title'] = u"Назва є обов'язковою"
+#             else:
+#                 data['title'] = title
+#             leader = request.POST.get('leader', '').strip()
+#             if not leader:
+#                 errors['leader'] = u"Оберіть старосту групи"
+#             else:
+#                 students = Student.objects.filter(pk=leader)
+#                 if len(students) != 1:
+#                     errors['leader'] = u"Оберіть групу для студента"
+#                 else:
+#                     data['leader'] = students[0]
+#
+#             if not errors:
+#                 # create student object
+#                 group = Group(**data)
+#           #      group = Group(
+#            #         title=request.POST['title'],
+#              #       ticket=request.POST['ticket'],
+#              #       leader=Student.objects.get(pk=request.POST['leader']),
+#              #   )
+#                 # save it to the database
+#                 group.save()
+#                 # redirect user to students list
+#                 return HttpResponseRedirect(
+#                     u'{}?status_message=Групу успишно додано!'.format(reverse('groups'))
+#                     )
+#
+#             else:
+#             # render form with errors and previous user input
+#                 return render(request, 'students/groups_add.html',
+#                               {'students': Student.objects.all().order_by('student_group'),
+#                                'errors': errors})
+#
+#         elif request.POST.get('cancel_button') is not None:
+#             # redirect to home page on cancel button
+#             return HttpResponseRedirect(
+#                 u'{}?status_message=Додавання групи скасоване!'.format(reverse('groups'))
+#                 )
+#     else:
+#         # initial form render
+#         return render(request, 'students/groups_add.html',
+#                       {'students': Student.objects.all().order_by('student_group')})
 
 class GroupUpdateView(UpdateView):
     model = Group
@@ -335,6 +359,7 @@ class GroupUpdateView(UpdateView):
                 )
         else:
             return super(GroupUpdateView, self).post(request, *args, **kwargs)
+
 
 class GroupDeleteView(DeleteView):
     model = Group

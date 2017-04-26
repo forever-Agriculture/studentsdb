@@ -18,7 +18,7 @@ from django.contrib import admin
 from students import views
 from django.conf import settings
 from django.conf.urls.static import static
-from students.views import StudentUpdateView, StudentDeleteView, GroupUpdateView, GroupDeleteView, StudentsListView, JournalView
+from students.views import StudentsListView, StudentCreateView, StudentUpdateView, StudentDeleteView, GroupsListView, GroupCreateView, GroupUpdateView, GroupDeleteView, JournalView
 
 
 urlpatterns = [
@@ -27,15 +27,17 @@ urlpatterns = [
 
     # url(r'^$', views.students_list, name='home'),
     url(r'^$', StudentsListView.as_view(), name='home'),
-    url(r'^students/add/$', views.students_add, name='students_add'),
-    # url(r'^students/add/$', StudentCreateForm.as_view(), name='students_add'),
+    # url(r'^students/add/$', views.students_add, name='students_add'),
+    url(r'^students/add/$', StudentCreateView.as_view(), name='students_add'),
     url(r'^students/(?P<pk>\d+)/edit/$', StudentUpdateView.as_view(), name='students_edit'),
     url(r'^students/(?P<pk>\d+)/delete/$', StudentDeleteView.as_view(), name='students_delete'),
 
     # Groups
 
-    url(r'^groups/$', views.groups_list, name='groups'),
-    url(r'^groups/add/$', views.groups_add, name='groups_add'),
+    # url(r'^groups/$', views.groups_list, name='groups'),
+    url(r'^groups/$', GroupsListView.as_view(), name='groups'),
+    # url(r'^groups/add/$', views.groups_add, name='groups_add'),
+    url(r'^groups/add/$', GroupCreateView.as_view(), name='groups_add'),
     url(r'^groups/(?P<pk>\d+)/edit/$', GroupUpdateView.as_view(), name='groups_edit'),
     url(r'^groups/(?P<pk>\d+)/delete/$', GroupDeleteView.as_view(), name='groups_delete'),
 
