@@ -157,7 +157,7 @@ class StudentsListView(ListView):
 
 
 class StudentCreateView(CreateView):
-        queryset = Student.objects.all()
+        model = Student
         template_name = 'students/students_add.html'
         fields = '__all__'
 
@@ -171,6 +171,11 @@ class StudentCreateView(CreateView):
                 )
             else:
                 return super(StudentCreateView, self).post(request, *args, **kwargs)
+
+        def get_context_data(self, **kwargs):
+            context = super(StudentCreateView, self).get_context_data(**kwargs)
+            context['groups'] = Group.objects.all()
+            return context
 
 
 # class StudentUpdateForm(ModelForm):

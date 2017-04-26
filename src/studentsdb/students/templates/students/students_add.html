@@ -73,8 +73,8 @@
         <div class=”col-sm-10”>
             <select name="student_group" id="student_group" class="form-control">
                 <option value="">Виберіть групу</option>
-                {% for group in form.student_group %}
-                <option value="{{ group.id }}">{{ group.title }}</option>
+                {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group }}</option>
                 {% endfor %}
             </select>
             <span class=”help-block”>{{ form.errors.student_group }}</span>
