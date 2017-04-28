@@ -4,14 +4,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Create your models here.
+
 class Student(models.Model):
     """Student Model"""
-
-    class Meta(object):
-        verbose_name = u"Студент"
-        verbose_name_plural = u"Студенти"
-
     first_name = models.CharField(
         max_length=256,
         blank=False,
@@ -53,17 +48,16 @@ class Student(models.Model):
         blank=True,
         verbose_name=u"Додаткові нотатки")
 
+    class Meta(object):
+        verbose_name = u"Студент"
+        verbose_name_plural = u"Студенти"
+
     def __unicode__(self):
         return u'{} {}'.format(self.first_name, self.last_name)
 
 
 class Group(models.Model):
     """Group Model"""
-
-    class Meta(object):
-        verbose_name = u"Група"
-        verbose_name_plural = u"Групи"
-
     title = models.CharField(
         max_length=256,
         blank=False,
@@ -85,14 +79,13 @@ class Group(models.Model):
         else:
             return u'{}'.format(self.title)
 
+    class Meta(object):
+        verbose_name = u"Група"
+        verbose_name_plural = u"Групи"
+
 
 class MonthJournal(models.Model):
     """Student Monthly Journal"""
-
-    class Meta(object):
-        verbose_name = u"Місячний журнал"
-        verbose_name_plural = u"Місячні журнали"
-
     student = models.ForeignKey('Student',
     verbose_name=u'Студент',
     blank=False,
@@ -136,3 +129,8 @@ class MonthJournal(models.Model):
 
     def __unicode__(self):
         return u'{} {} {}'.format(self.student.last_name, self.date.month, self.date.year)
+
+    class Meta(object):
+        verbose_name = u"Місячний журнал"
+        verbose_name_plural = u"Місячні журнали"
+

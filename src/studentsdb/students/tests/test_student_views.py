@@ -7,7 +7,7 @@ from .models import Student, Group
 
 
 class TestStudentList(TestCase):
-
+    """..."""
     def setUp(self):
         # create 2 groups
         group1, created = Group.objects.get_or_create(
