@@ -8,78 +8,74 @@
 
 {% block content %}
 <a href="{% url "groups_add" %}" class="btn btn-primary">Додати Групу</a>
-
-
-        <!-- Start Student Listing -->
-        <table class="table">
-          {% with order_by=request.GET.order_by reverse=request.GET.reverse %}
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>
-                  <a href="{% url "groups" %}?order_by=title{% if order_by == 'title' and reverse != '1' %}&amp;reverse=1{% endif %}">
-                    Назва
-                    {% if order_by == 'title' and reverse != '1' %}&uarr;
-                        {% elif order_by != 'leader' and reverse != '1' %}&uarr;
-                        {% elif order_by == 'title' and reverse == '1' %}&darr;
-                    {% endif %}
-                </a>
-              </th>
-              <th>
-                  <a href="{% url "groups" %}?order_by=leader{% if order_by == 'leader' and reverse != '1' %}&amp;reverse=1{% endif %}">
-                    Староста
-                    {% if order_by == 'leader' and reverse != '1' %}&uarr;
-                        {% elif order_by == 'leader' and reverse == '1' %}&darr;
-                    {% endif %}
-                </a>
-              </th>
-              <th>Дії</th>
-          </thead>
-          <tbody>
-            {% for group in groups_list %}
-            <tr>
-              <td>{{ forloop.counter }}</td>
-              <td><a href="{% url "groups_edit" group.id %}">{{ group.title }}</a></td>
-              <td><a href="{% url "students_edit" group.leader.id %}">{{ group.leader }}</a></td>
-              <td>
-                <div class="dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button"
-                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Дія
-                          <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="{% url "groups_edit" group.id %}">Редагувати</a></li>
-                    <li><a href="{% url "groups_delete" group.id %}">Видалити</a></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
+    <!-- Start Student Listing -->
+    <table class="table">
+      {% with order_by=request.GET.order_by reverse=request.GET.reverse %}
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>
+              <a href="{% url "groups" %}?order_by=title{% if order_by == 'title' and reverse != '1' %}&amp;reverse=1{% endif %}">
+                Назва
+                {% if order_by == 'title' and reverse != '1' %}&uarr;
+                    {% elif order_by != 'leader' and reverse != '1' %}&uarr;
+                    {% elif order_by == 'title' and reverse == '1' %}&darr;
+                {% endif %}
+            </a>
+          </th>
+          <th>
+              <a href="{% url "groups" %}?order_by=leader{% if order_by == 'leader' and reverse != '1' %}&amp;reverse=1{% endif %}">
+                Староста
+                {% if order_by == 'leader' and reverse != '1' %}&uarr;
+                    {% elif order_by == 'leader' and reverse == '1' %}&darr;
+                {% endif %}
+            </a>
+          </th>
+          <th>Дії</th>
+      </thead>
+      <tbody>
+        {% for group in groups_list %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td><a href="{% url "groups_edit" group.id %}">{{ group.title }}</a></td>
+          <td><a href="{% url "students_edit" group.leader.id %}">{{ group.leader }}</a></td>
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Дія
+                      <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="{% url "groups_edit" group.id %}">Редагувати</a></li>
+                <li><a href="{% url "groups_delete" group.id %}">Видалити</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      {% endwith %}
+    </table>
+    <!-- End Student Listing -->
+    {% if page_obj.has_other_pages %}
+    <nav class="customPagination" aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li>
+                <a href="{% url "groups" %}?page={{ page_obj.previous_page_number }}">&laquo;</a>
+            </li>
+            {% endif %}
+            {% for student in groups_range %}
+            <li class="{% if page_obj.number == forloop.counter %} active {% endif %}">
+                <a href="{% url "groups" %}?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+            </li>
             {% endfor %}
-          </tbody>
-          {% endwith %}
-        </table>
-        <!-- End Student Listing -->
-        {% if page_obj.has_other_pages %}
-        <nav class="customPagination" aria-label="Page navigation">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                <li>
-                    <a href="{% url "groups" %}?page={{ page_obj.previous_page_number }}">&laquo;</a>
-                </li>
-                {% endif %}
-
-                {% for student in groups_range %}
-                <li class="{% if page_obj.number == forloop.counter %} active {% endif %}">
-                    <a href="{% url "groups" %}?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-                </li>
-                {% endfor %}
-
-                {% if page_obj.has_next %}
-                <li>
-                    <a href="{% url "groups" %}?page={{ page_obj.next_page_number }}">&raquo;</a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
+            {% if page_obj.has_next %}
+            <li>
+                <a href="{% url "groups" %}?page={{ page_obj.next_page_number }}">&raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 {% endblock content %}

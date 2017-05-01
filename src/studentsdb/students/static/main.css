@@ -88,14 +88,6 @@ input {
   max-width: 300px;
 }
 
-/* Journal Table Styles */
-td.day-box,
-th.day-header {
-  padding: 4px !important;
-  vertical-align: middle !important;
-  text-align: center;
-}
-
 /* Pagination */
 nav.customPagination {
     text-align: center !important;

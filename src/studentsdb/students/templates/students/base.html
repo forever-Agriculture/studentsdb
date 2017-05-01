@@ -31,7 +31,7 @@
         </div>
 
         <!-- Groups Selector -->
-        <div class="col-xs-4 group-selector"
+        <div class="col-xs-4 group-selector hidden"
           <strong>Група:</strong>
           <select>
             <option value=" ">Усі Студенти</option>
@@ -49,9 +49,6 @@
             <li role="presentation" {% url "home" as home_url %}
                 {% if home_url == request.path %} class="active" {% endif %}>
               <a href="{% url "home" %}">Студенти</a></li>
-            <li role="presentation" {% url "journal" as journal_url %}
-                {% if journal_url in request.path %} class="active" {% endif %}>
-              <a href="{% url "journal" %}">Відвідування</a></li>
             <li role="presentation" {% url "groups" as groups_url %}
                 {% if groups_url in request.path %} class="active" {% endif %}>
               <a href="{% url "groups" %}">Групи</a></li>

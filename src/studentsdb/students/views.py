@@ -7,19 +7,11 @@ from dateutil.relativedelta import relativedelta
 # django imports
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render
+from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.views.generic.base import TemplateView
-from django.forms import ModelForm
-
-# other imports
-from calendar import monthrange, weekday, day_abbr
-from crispy_forms.helper import FormHelper
 
 # app imports
-from .models import Student, Group, MonthJournal
-from .util import paginate
+from .models import Student, Group
 
 
 # Student Views
@@ -45,7 +37,7 @@ class StudentsListView(ListView):
         return context
 
 
-class StudentCreateView(CreateView):
+class StudentCreateView(SuccessMessageMixin, CreateView):
     """..."""
     model = Student
     template_name = 'students/students_add.html'
@@ -85,6 +77,11 @@ class StudentUpdateView(UpdateView):
         else:
             return super(StudentUpdateView, self).post(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(StudentUpdateView, self).get_context_data(**kwargs)
+        context['groups'] = Group.objects.all()
+        return context
+
 
 class StudentDeleteView(DeleteView):
     model = Student
@@ -103,18 +100,18 @@ class GroupsListView(ListView):
     context_object_name = 'groups_list'
     paginate_by = 3
 
-    def get_reverse_order(self):
+    def get_queryset(self):
+        queryset = super(GroupsListView, self).get_queryset()
         order_by = self.request.GET.get('order_by', 'title')
         if order_by in ('leader', 'title'):
-            self.queryset = self.queryset.order_by(order_by)
+            queryset = queryset.order_by(order_by)
             if self.request.GET.get('reverse', '') == '1':
-                self.queryset = self.queryset.reverse()
-        return order_by
+                queryset = queryset.reverse()
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(GroupsListView, self).get_context_data(**kwargs)
         context['groups_range'] = range(context["paginator"].num_pages)
-        context['order_by'] = self.get_reverse_order()
         return context
 
 
@@ -135,6 +132,11 @@ class GroupCreateView(CreateView):
         else:
             return super(GroupCreateView, self).post(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(GroupCreateView, self).get_context_data(**kwargs)
+        context['students'] = Student.objects.all()
+        return context
+
 
 class GroupUpdateView(UpdateView):
     """..."""
@@ -153,72 +155,17 @@ class GroupUpdateView(UpdateView):
         else:
             return super(GroupUpdateView, self).post(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(GroupUpdateView, self).get_context_data(**kwargs)
+        context['students'] = Student.objects.all()
+        return context
+
 
 class GroupDeleteView(DeleteView):
+    """..."""
     model = Group
     fields = '__all__'
     template_name = 'students/groups_confirm_delete.html'
 
     def get_success_url(self):
         return u'{}?status_message=Група успішно видалена!'.format(reverse('groups'))
-
-
-# Journal Views
-class JournalView(TemplateView):
-    template_name = 'students/journal.html'
-
-    def get_context_data(self, **kwargs):
-        # get context data from TemplateView class
-        context = super(JournalView, self).get_context_data(**kwargs)
-
-        if self.request.GET.get('month'):
-            month = datetime.strptime(self.request.GET['month'], '%Y-%m-%d').date()
-        else:
-            today = datetime.today()
-            month = date(today.year, today.month, 1)
-
-        next_month = month + relativedelta(months=1)
-        prev_month = month - relativedelta(months=1)
-        context['prev_month'] = prev_month.strftime('%Y-%m-%d')
-        context['next_month'] = next_month.strftime('%Y-%m-%d')
-        context['year'] = month.year
-        context['month_verbose'] = month.strftime('%B')
-
-        context['cur_month'] = month.strftime('%Y-%m-%d')
-
-        myear, mmonth = month.year, month.month
-        number_of_days = monthrange(myear, mmonth)[1]
-        context['month_header'] = [{'day': d,
-                                    'verbose': day_abbr[weekday(myear, mmonth, d)][:2]}
-                                   for d in range(1, number_of_days + 1)]
-
-        queryset = Student.objects.order_by('last_name')
-
-        update_url = reverse('journal')
-
-        students = []
-        for student in queryset:
-            try:
-                journal = MonthJournal.objects.get(student=student, date=month)
-            except Exception:
-                journal = None
-
-            days = []
-            for day in range(1, number_of_days + 1):
-                days.append({
-                    'day': day,
-                    'present': journal and getattr(journal, 'present_day{}'.format(day),
-                                                   False) or False,
-                    'date': date(myear, mmonth, day).strftime('%Y-%m-%d'),
-                })
-
-            students.append({
-                'fullname': u'{} {}'.format(student.last_name, student.first_name),
-                'days': days,
-                'id': student.id,
-                'update_url': update_url,
-            })
-
-            context = paginate(students, 10, self.request, context, var_name='students')
-
-            return context

@@ -23,7 +23,7 @@
     <div class="form-group {% if errors.first_name %}has-error{% endif %}">
         <label for="first_name" class="col-sm-2 control-label">Ім'я*</label>
         <div class=”col-sm-12”>
-            <input type="text" value="{{ form.first_name.value }}"
+            <input type="text" value="{{ form.instance.first_name }}"
                 name="first_name" id="first_name" class="form-control" />
             <span class=”help-block”>{{ form.errors.first_name }}</span>
         </div>
@@ -31,7 +31,7 @@
     <div class="form-group {% if errors.last_name %}has-error{% endif %}">
         <label for="last_name" class="col-sm-2 control-label">Прізвище*</label>
         <div class=”col-sm-10”>
-            <input type="text" value="{{ form.last_name.value }}"
+            <input type="text" value="{{ form.instance.last_name }}"
                 name="last_name" id="last_name" class="form-control" />
             <span class=”help-block”>{{ form.errors.last_name }}</span>
         </div>
@@ -39,7 +39,7 @@
     <div class="form-group">
         <label for="middle_name" class="col-sm-2 control-label">По-батькові</label>
         <div class=”col-sm-10”>
-            <input type="text" value="{{ request.POST.middle_name }}"
+            <input type="text" value="{{ form.instance.middle_name }}"
                 name="middle_name" id="middle_name" class="form-control" />
         </div>
     </div>
@@ -55,7 +55,7 @@
     <div class="form-group">
         <label for="photo" class="col-sm-2 control-label">Фото</label>
         <div class=”col-sm-10”>
-            <input type="file" value="{{ request.POST.photo }}"
+            <input type="file" value="{{ form.photo.value }}"
                 name="photo" id="photo" class="form-control" />
             <span class=”help-block”>{{ form.errors.photo }}</span>
         </div>
@@ -63,7 +63,7 @@
     <div class="form-group {% if errors.ticket %}has-error{% endif %}">
         <label for="ticket" class="col-sm-2 control-label">Квиток*</label>
         <div class=”col-sm-10”>
-            <input type="text" value="{{ request.POST.ticket }}"
+            <input type="text" value="{{ form.instance.ticket }}"
                 name="ticket" id="ticket" class="form-control" />
             <span class=”help-block”>{{ form.errors.ticket }}</span>
         </div>
@@ -73,8 +73,8 @@
         <div class=”col-sm-10”>
             <select name="student_group" id="student_group" class="form-control">
                 <option value="">Виберіть групу</option>
-                {% for group in form.student_group %}
-                <option value="{{ group.id }}">{{ group.title }}</option>
+                {% for group in groups %}
+                <option value="{{ group.id }}">{{ group }}</option>
                 {% endfor %}
             </select>
             <span class=”help-block”>{{ form.errors.student_group }}</span>
@@ -83,7 +83,7 @@
     <div class="form-group">
         <label for="notes" class="col-sm-2 control-label">Додаткові нотатки</label>
         <div class=”col-sm-10”>
-            <textarea name="notes" id="notes" class="form-control">{{ request.POST.notes }}</textarea>
+            <textarea name="notes" id="notes" class="form-control">{{ form.instance.notes }}</textarea>
         </div>
     </div>
     <div class="form-group">
@@ -95,11 +95,5 @@
 
 </form>
 
-<!--<form method="post">-->
-    <!--{% csrf_token %}-->
-    <!--{{ form.as_p }}-->
-    <!--<input type="submit" value="Змінити" class="btn btn-primary">-->
-    <!--<button type="submit" name="cancel_button" class="btn btn-link">Скасувати</button><br /><br />-->
-<!--</form>-->
 
 {% endblock content %}
